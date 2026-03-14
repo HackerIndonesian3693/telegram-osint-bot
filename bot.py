@@ -18,7 +18,7 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🔎 Searching...")
 
     try:
-        api = f"https://all.proportalxc.workers.dev/number?number={number}"
+        api = f"https://all.proportalxc.workers.dev/number?number=9876543210"
         r = requests.get(api, timeout=10)
         data = r.json()
     except Exception as e:
