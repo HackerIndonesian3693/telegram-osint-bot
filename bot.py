@@ -1,16 +1,22 @@
+import os
 import requests
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
 
-TOKEN = "8780934896:AAHrlDn778kbn5OLSwNMZ2qezf_rFVhPUHI"
+TOKEN = os.getenv("7684622074:AAEn2D3e9y7nSr47srQN80aGtVS1aE-pj7A")
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📱 Send Mobile Number\n\nExample:\n9876543210"
+    )
 
 async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    number = update.message.text
+    number = update.message.text.strip()
 
     api = f"https://all.proportalxc.workers.dev/number?number={number}"
 
     try:
-        r = requests.get(api)
+        r = requests.get(api, timeout=10)
         data = r.json()
     except:
         await update.message.reply_text("⚠️ API Error")
@@ -24,7 +30,7 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     output = ""
 
-    for r in records[:5]:   # limit 5 results
+    for r in records[:3]:
         output += (
             f"📱 Mobile : {r.get('mobile','N/A')}\n"
             f"👤 Name : {r.get('name','N/A')}\n"
@@ -39,11 +45,11 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(output)
 
-
 app = ApplicationBuilder().token(TOKEN).build()
 
+app.add_handler(CommandHandler("start", start))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, lookup))
 
-print("Bot Started...")
+print("🤖 Bot Started")
 
 app.run_polling()
