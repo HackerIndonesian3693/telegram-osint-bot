@@ -1,49 +1,31 @@
 import os
-import requests
+import aiohttp
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("📱 Enter Mobile Number Without +91")
+    await update.message.reply_text("📱 Send Mobile Number Without +91")
 
 async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     number = update.message.text.strip()
 
-    if not number.isdigit():
-        await update.message.reply_text("❌ Send valid number")
-        return
-
     await update.message.reply_text("🔎 Searching...")
 
+    api = f"https://all.proportalxc.workers.dev/number?number={number}"
+
     try:
-        api = f"https://all.proportalxc.workers.dev/number?number=9876543210"
-        r = requests.get(api, timeout=10)
-        data = r.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api, timeout=8) as resp:
+                text = await resp.text()
+
+        await update.message.reply_text("✅ API Response Received")
+        await update.message.reply_text(text[:1000])
+
     except Exception as e:
-        await update.message.reply_text("⚠️ API Error")
+        await update.message.reply_text("❌ API Not Working")
         print(e)
-        return
-
-    records = data.get("result", [])
-
-    if not records:
-        await update.message.reply_text("❌ No Data Found")
-        return
-
-    r = records[0]
-
-    msg = f"""
-📱 Mobile : {r.get('mobile','N/A')}
-👤 Name : {r.get('name','N/A')}
-👨 Father : {r.get('father name','N/A')}
-🏠 Address : {r.get('address','N/A')}
-📡 SIM : {r.get('circles/sim','N/A')}
-📧 Mail : {r.get('mail','N/A')}
-"""
-
-    await update.message.reply_text(msg)
 
 app = ApplicationBuilder().token(TOKEN).build()
 
@@ -52,4 +34,4 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, lookup))
 
 print("🤖 Bot Started")
 
-app.run_polling(drop_pending_updates=True)
+app.run_polling()
