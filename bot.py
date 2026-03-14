@@ -28,7 +28,7 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"━━━━━━━━━━━━━━━━━━\n"
         )
 
-    output += "\n👨‍💻 API Developer : Cybershiva"
+    output += "\n👨‍💻 API Developer : Cybershiva Enter Mobile Number Without +91"
 
     await update.message.reply_text(output)
 
