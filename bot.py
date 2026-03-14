@@ -12,36 +12,38 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     number = update.message.text.strip()
 
     if not number.isdigit():
-        await update.message.reply_text("❌ Send valid mobile number")
+        await update.message.reply_text("❌ Send valid number")
         return
 
-    api = f"https://all.proportalxc.workers.dev/number?number={number}"
+    await update.message.reply_text("🔎 Searching...")
 
     try:
+        api = f"https://all.proportalxc.workers.dev/number?number={number}"
         r = requests.get(api, timeout=10)
         data = r.json()
-    except:
+    except Exception as e:
         await update.message.reply_text("⚠️ API Error")
+        print(e)
         return
 
-    records = data.get("result")
+    records = data.get("result", [])
 
     if not records:
-        await update.message.reply_text("❌ Number Details Not Found")
+        await update.message.reply_text("❌ No Data Found")
         return
 
-    r = records[0]  # first result
+    r = records[0]
 
-    output = (
-        f"📱 Mobile : {r.get('mobile','N/A')}\n"
-        f"👤 Name : {r.get('name','N/A')}\n"
-        f"👨 Father : {r.get('father name','N/A')}\n"
-        f"🏠 Address : {r.get('address','N/A')}\n"
-        f"📡 SIM : {r.get('circles/sim','N/A')}\n"
-        f"📧 Mail : {r.get('mail','N/A')}\n"
-    )
+    msg = f"""
+📱 Mobile : {r.get('mobile','N/A')}
+👤 Name : {r.get('name','N/A')}
+👨 Father : {r.get('father name','N/A')}
+🏠 Address : {r.get('address','N/A')}
+📡 SIM : {r.get('circles/sim','N/A')}
+📧 Mail : {r.get('mail','N/A')}
+"""
 
-    await update.message.reply_text(output)
+    await update.message.reply_text(msg)
 
 app = ApplicationBuilder().token(TOKEN).build()
 
