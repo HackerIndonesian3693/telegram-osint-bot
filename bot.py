@@ -12,7 +12,11 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     r = requests.get(api)
     data = r.json()
 
-    records = data.get("records", [])
+    records = data.get("result", [])
+
+    if not records:
+        await update.message.reply_text("❌ Number Details Not Found")
+        return
 
     output = ""
 
@@ -22,16 +26,15 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"👤 Name : {r.get('name', 'N/A')}\n"
             f"👨 Father : {r.get('father name', 'N/A')}\n"
             f"🏠 Address : {r.get('address', 'N/A')}\n"
-            f"📡 SIM : {r.get('circle/sim', r.get('circle/im', 'N/A'))}\n"
+            f"📡 SIM : {r.get('circles/sim', 'N/A')}\n"
             f"🆔 ID : {r.get('id number', 'N/A')}\n"
             f"📧 Mail : {r.get('mail', 'N/A')}\n"
             f"━━━━━━━━━━━━━━━━━━\n"
         )
 
-    output += "\n👨‍💻 API Developer : Cybershiva Enter Mobile Number Without +91"
+    output += "\n👨‍💻 API Developer : Cybershiva Enter Number"
 
     await update.message.reply_text(output)
-
 app = ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(MessageHandler(filters.TEXT, lookup))
