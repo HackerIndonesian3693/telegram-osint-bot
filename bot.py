@@ -2,7 +2,7 @@ import requests
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 
-TOKEN = "8517903145:AAEvnyh95sAqPkjYUMtLSupD8t-R8e4ny6Y"
+TOKEN = "8780934896:AAHrlDn778kbn5OLSwNMZ2qezf_rFVhPUHI"
 
 async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     number = update.message.text
