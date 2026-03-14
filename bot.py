@@ -35,6 +35,7 @@ async def lookup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     output += "\n👨‍💻 API Developer : Cybershiva Enter Number"
 
     await update.message.reply_text(output)
+    
 app = ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(MessageHandler(filters.TEXT, lookup))
